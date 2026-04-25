@@ -5,9 +5,15 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Set gradlew permission
-        script: chmod +x gradlew
-      - name: Build Debug APK
-        script: ./gradlew assembleDebug
+      - name: Show project structure
+        script: find . -name "gradlew" | head -5 && echo "---" && ls -la
+      - name: Set gradlew permission and Build
+        script: |
+          GRADLEW_PATH=$(find . -name "gradlew" | head -1)
+          PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+          echo "Found gradlew at: $GRADLEW_PATH"
+          cd "$PROJECT_DIR"
+          chmod +x gradlew
+          ./gradlew assembleDebug
     artifacts:
-      - app/build/outputs/apk/debug/app-debug.apk
+      - "**/app/build/outputs/apk/debug/app-debug.apk"
